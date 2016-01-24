@@ -138,7 +138,7 @@ declare function rxq:rewrite-options(
 {
   <options xmlns="http://marklogic.com/appservices/rest">
   {
-  for $f in xdmp:functions()[fn:not(fn:prefix-from-QName(fn:function-name(.)) = $exclude-prefixes)]
+  for $f in xdmp:functions()(:[fn:not(fn:prefix-from-QName(fn:function-name(.)) = $exclude-prefixes)] :)
   order by xdmp:annotation($f,xs:QName('rxq:path')) descending
   return
     let $qname := fn:function-name($f)
