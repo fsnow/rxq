@@ -8,6 +8,7 @@ declare
  %rxq:produces('text/html')
  %rxq:GET
  %rxq:path('/ex2/a')
+ %rxq:txmode("query")
  function ex2:b(
   $var
 )
@@ -15,6 +16,11 @@ declare
 <html>
 <body>
 {ex2:header()}
+<h1>{   if (xdmp:request-timestamp()) then
+    "transaction is query"
+  else
+    "transaction is update"
+    }</h1>
 <h1>Function ex2:b from modules/ex2.xqy</h1>
 method:HTTP GET <br/>
 path: /ex2/a/ <br/>
@@ -29,6 +35,7 @@ declare
  %rxq:produces('text/html')
  %rxq:GET
  %rxq:path('/ex2/a/(.*)')
+ %rxq:txmode("query")
  function ex2:a(
    $var1
 )

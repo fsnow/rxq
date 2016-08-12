@@ -11,6 +11,7 @@ declare
  %rxq:produces('text/html')
  %rxq:GET
  %rxq:path('/ex1/c/(.*)/(.*)/')
+ %rxq:txmode("query")
  function ex1:regex-example(
    $var1,
    $var2
@@ -39,6 +40,7 @@ declare
  %rxq:produces('text/html')
  %rxq:GET
  %rxq:path('/ex1/c/(.*)/(.*)/(\d1)')
+ %rxq:txmode("query")
  function ex1:regex-example2(
    $var1,
    $var2,
@@ -65,6 +67,7 @@ declare
  %rxq:produces('text/html')
  %rxq:GET
  %rxq:path('/ex1/a/')
+ %rxq:txmode("query")
  function ex1:b(
    $var1
 )
@@ -88,6 +91,7 @@ declare
  %rxq:produces('text/html')
  %rxq:GET
  %rxq:path('/ex1/a/(.*)')
+ %rxq:txmode("query")
  function ex1:a(
    $var1
 )
@@ -111,6 +115,7 @@ declare
  %rxq:produces('text/html')
  %rxq:GET
  %rxq:path('/')
+ %rxq:txmode("query")
  function ex1:entry-point() {
 <html>
 <body>
@@ -173,6 +178,7 @@ declare
   %rxq:produces('text/plain')
   %rxq:GET
   %rxq:path('/without-ns-prefix')
+  %rxq:txmode("query")
 function without-ns-prefix(){
   "foo"
 };
@@ -188,6 +194,7 @@ declare
   %output:indent('no')
   %rxq:GET
   %rxq:path('/basic-html-document')
+  %rxq:txmode("query")
 function basic-html-document(){
   <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -207,6 +214,7 @@ declare
   %output:indent('no')
   %rxq:GET
   %rxq:path('/text-serialization-iso-8859-1')
+  %rxq:txmode("query")
 function text-serialization-iso-8859-1(){
   <e>Hello World</e>
 };
@@ -221,6 +229,7 @@ declare
   %output:standalone('no')
   %rxq:GET
   %rxq:path('/xhtml-with-doctype')
+  %rxq:txmode("query")
 function xhtml-with-doctype(){
   <html xmlns="http://www.w3.org/1999/xhtml">
     <head />
@@ -240,8 +249,21 @@ declare
   %rxq:GET
   %xdmp:gzip
   %rxq:path('/text-content-gzipped')
+  %rxq:txmode("query")
 function text-content-gzipped(){
   text { "Hello World, gzipped" }
 };
 
 
+
+(:~ demonstrates HTTP GET  :)
+declare
+%rxq:produces('text/xml')
+%rxq:GET
+%rxq:path('/rest-options')
+%rxq:txmode("query")
+function get-rest-options()
+  as element()
+{
+  rxq:rewrite-options($rxq:exclude-prefixes)
+};

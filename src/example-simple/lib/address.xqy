@@ -1,7 +1,7 @@
 xquery version "1.0-ml";
 
 module namespace address="http://example.org/address";
-       
+
 declare namespace rxq="http://exquery.org/ns/restxq";
 
 declare variable $addresses := <addresses>
@@ -19,6 +19,7 @@ declare
  %rxq:produces('text/xml')
  %rxq:GET
  %rxq:path('/address/all')
+ %rxq:txmode("query")
  function address:all-addresses(
    $dummy
 ) as element(){
@@ -33,6 +34,7 @@ declare
  %rxq:produces('text/xml')
  %rxq:GET
  %rxq:path('/address/(.*)')
+ %rxq:txmode("query")
  function address:get-address(
    $id
 ) as element(){
@@ -54,12 +56,23 @@ declare
  %rxq:produces('text/xml')
  %rxq:PUT
  %rxq:path('/address/(.*)')
+ %rxq:txmode("update")
  function address:insert-address(
    $id
-) as element(){
-   ( xdmp:set-response-code(201, "Created"),
+) as element()
+{
+
+  let $address := (xdmp:get-request-body("xml")/.)/*
+  let $uri := "/addresses/" || $id
+  return
+  (
+    xdmp:document-insert($uri, $address)
+  ,
+
+   xdmp:set-response-code(201, "Created"),
    <success id="{$id}" http-method="PUT">{
      element address {attribute id {$id},
+     element uri { $uri },
      (xdmp:get-request-body("xml")/.)/*} }
    </success>
    )
@@ -71,6 +84,7 @@ declare
  %rxq:produces('*/*')
  %rxq:POST
  %rxq:path('/address/(.*)')
+ %rxq:txmode("update")
  function address:change-address(
    $id
 ) as element(){
@@ -88,11 +102,12 @@ declare
  %rxq:produces('text/xml')
  %rxq:DELETE
  %rxq:path('/address/(.*)')
+ %rxq:txmode("update")
  function address:remove-address(
    $id
 ) as element(){
    if($addresses/address[@id eq $id]) then
-    ( xdmp:set-response-code(200, "OK"),     
+    ( xdmp:set-response-code(200, "OK"),
      <success id="{$id}" http-method="DELETE"></success>
      )
    else
